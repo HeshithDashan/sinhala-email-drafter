@@ -39,4 +39,4 @@ if st.button("Generate Email Draft"):
         st.warning("කරුණාකර යමක් type කරන්න.")
 
 st.markdown("---")
-st.markdown("Made with ❤️ by Sago")
+st.markdown("Made with ❤️ by Heshith_D")
