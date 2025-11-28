@@ -17,71 +17,68 @@ email_type = st.selectbox(
     ["General (සාමාන්‍ය)", "Leave Request (නිවාඩු ඉල්ලීම)", "Sick Leave (අසනීප නිවාඩු)", "Meeting Request (රැස්වීමක් ඉල්ලීම)"]
 )
 
-user_input = st.text_area("විස්තරය සිංහලෙන් ලියන්න:", height=100, placeholder="උදා: මට හෙට එන්න වෙන්නේ නෑ...")
+user_input = st.text_area("විස්තරය සිංහලෙන් ලියන්න:", height=300, placeholder="ඔබේ විස්තරය මෙතන ලියන්න...")
 
 if st.button("Draft Email 📝"):
     if user_input:
         english_reason = translate_text(user_input)
         
-        email_body = ""
-        subject = ""
-        
         if email_type == "Leave Request (නිවාඩු ඉල්ලීම)":
-            subject = "Subject: Request for Casual Leave"
-            email_body = f"""
-            Dear Manager,
+            full_email = f"""Subject: Request for Casual Leave
 
-            I am writing to request leave. 
-            Reason: {english_reason}
+Dear Manager,
 
-            I ensure that my pending tasks will be managed before I leave.
+I am writing to request leave.
 
-            Best regards,
-            [Your Name]
-            """
+Reason:
+{english_reason}
+
+I ensure that my pending tasks will be managed before I leave.
+
+Best regards,
+[Your Name]"""
             
         elif email_type == "Sick Leave (අසනීප නිවාඩු)":
-            subject = "Subject: Sick Leave Application"
-            email_body = f"""
-            Dear Manager,
+            full_email = f"""Subject: Sick Leave Application
 
-            I am writing to inform you that I am unable to attend work today due to illness.
-            Details: {english_reason}
+Dear Manager,
 
-            I will be available on email for any urgent matters.
+I am writing to inform you that I am unable to attend work today due to illness.
 
-            Best regards,
-            [Your Name]
-            """
+Details:
+{english_reason}
+
+I will be available on email for any urgent matters.
+
+Best regards,
+[Your Name]"""
             
         elif email_type == "Meeting Request (රැස්වීමක් ඉල්ලීම)":
-            subject = "Subject: Meeting Request"
-            email_body = f"""
-            Dear Team,
+            full_email = f"""Subject: Meeting Request
 
-            I would like to request a meeting to discuss the following:
-            {english_reason}
+Dear Team,
 
-            Please let me know a convenient time for you.
+I would like to request a meeting to discuss the following matter:
 
-            Best regards,
-            [Your Name]
-            """
+{english_reason}
+
+Please let me know a convenient time for you.
+
+Best regards,
+[Your Name]"""
             
         else:
-            subject = "Subject: Update Regarding [Topic]"
-            email_body = f"""
-            Dear [Name],
+            full_email = f"""Subject: Update Regarding [Topic]
 
-            {english_reason}
+Dear [Name],
 
-            Best regards,
-            [Your Name]
-            """
+{english_reason}
+
+Best regards,
+[Your Name]"""
         
         st.success("Email Draft Ready! ✅")
-        st.text(subject)
-        st.code(email_body, language='text')
+        st.code(full_email, language='text')
         
     else:
         st.warning("කරුණාකර විස්තරයක් ඇතුලත් කරන්න.")
