@@ -1,16 +1,19 @@
 import streamlit as st
 from deep_translator import GoogleTranslator
+import urllib.parse
 
 st.set_page_config(page_title="Professional Email Drafter", layout="centered")
 st.title("📧 Sinhala to Professional English Email")
 st.caption("Professional Templates | Free & Simple 🚀")
 
-# Sidebar එකේ නම් ටික ඉල්ලමු
 with st.sidebar:
     st.header("📝 ඊමේල් විස්තර")
     sender_name = st.text_input("ඔබේ නම (Your Name):", "Heshith")
     recipient_name = st.text_input("යවන්නේ කාටද (Receiver Name):", "Manager")
     st.info("මෙහි දෙන නම් ඊමේල් එකට ස්වයංක්‍රීයව එකතු වේ.")
+    
+    if st.button("Clear All 🔄"):
+        st.rerun()
 
 def translate_text(text):
     try:
@@ -34,18 +37,18 @@ email_type = st.selectbox(
 
 user_input = st.text_area("විස්තරය සිංහලෙන් ලියන්න:", height=200, placeholder="ඔබේ විස්තරය මෙතන ලියන්න...")
 
-if st.button("Draft Email 📝"):
+if st.button("Draft Email 📝", type="primary"):
     if user_input:
         english_reason = translate_text(user_input)
         
-        # නම් නැත්නම් පොදු නම් පාවිච්චි කිරීම
         r_name = recipient_name if recipient_name else "Manager"
         s_name = sender_name if sender_name else "[Your Name]"
+        subject = ""
+        full_email = ""
 
         if email_type == "Leave Request (නිවාඩු ඉල්ලීම)":
-            full_email = f"""Subject: Formal Request for Leave
-
-Dear {r_name},
+            subject = "Formal Request for Leave"
+            full_email = f"""Dear {r_name},
 
 I am writing to formally request leave from work.
 
@@ -58,9 +61,8 @@ Best regards,
 {s_name}"""
             
         elif email_type == "Sick Leave (අසනීප නිවාඩු)":
-            full_email = f"""Subject: Notification of Absence - Sick Leave
-
-Dear {r_name},
+            subject = "Notification of Absence - Sick Leave"
+            full_email = f"""Dear {r_name},
 
 Please accept this email as notification that I am unable to attend work today due to health reasons.
 
@@ -73,9 +75,8 @@ Best regards,
 {s_name}"""
 
         elif email_type == "Work From Home (නිවසේ සිට වැඩ කිරීමට)":
-            full_email = f"""Subject: Request to Work from Home
-
-Dear {r_name},
+            subject = "Request to Work from Home"
+            full_email = f"""Dear {r_name},
 
 I am writing to request permission to work from home today.
 
@@ -90,9 +91,8 @@ Best regards,
 {s_name}"""
             
         elif email_type == "Meeting Request (රැස්වීමක් ඉල්ලීම)":
-            full_email = f"""Subject: Request for Meeting - Regarding Important Matter
-
-Dear {r_name},
+            subject = "Request for Meeting - Regarding Important Matter"
+            full_email = f"""Dear {r_name},
 
 I am writing to request a meeting to discuss a matter of importance.
 
@@ -105,9 +105,8 @@ Best regards,
 {s_name}"""
         
         elif email_type == "Resignation (රැකියාවෙන් ඉවත් වීම)":
-            full_email = f"""Subject: Formal Resignation Letter
-
-Dear {r_name},
+            subject = "Formal Resignation Letter"
+            full_email = f"""Dear {r_name},
 
 Please accept this letter as formal notification that I am resigning from my position.
 
@@ -120,9 +119,8 @@ Best regards,
 {s_name}"""
             
         elif email_type == "Thank You Note (ස්තුති කිරීම)":
-            full_email = f"""Subject: Thank You
-
-Dear {r_name},
+            subject = "Thank You"
+            full_email = f"""Dear {r_name},
 
 I am writing this note to express my sincere gratitude.
 
@@ -135,9 +133,8 @@ Best regards,
 {s_name}"""
             
         else:
-            full_email = f"""Subject: Update Regarding Work Matter
-
-Dear {r_name},
+            subject = "Update Regarding Work Matter"
+            full_email = f"""Dear {r_name},
 
 I am writing to bring the following to your attention.
 
@@ -150,7 +147,33 @@ Best regards,
 {s_name}"""
         
         st.success("Professional Email Draft Ready! ✅")
-        st.code(full_email, language='text')
+        
+        final_display_text = f"Subject: {subject}\n\n{full_email}"
+        st.code(final_display_text, language='text')
+
+        # Open in Email Client Link creation
+        safe_subject = urllib.parse.quote(subject)
+        safe_body = urllib.parse.quote(full_email)
+        mailto_link = f"mailto:?subject={safe_subject}&body={safe_body}"
+
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown(f'''
+                <a href="{mailto_link}" target="_blank">
+                    <button style="width: 100%; background-color: #FF4B4B; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">
+                        🚀 Open in Email App
+                    </button>
+                </a>
+                ''', unsafe_allow_html=True)
+            
+        with col2:
+            st.download_button(
+                label="💾 Download Text File",
+                data=final_display_text,
+                file_name="email_draft.txt",
+                mime="text/plain"
+            )
         
     else:
         st.warning("කරුණාකර විස්තරයක් ඇතුලත් කරන්න.")
