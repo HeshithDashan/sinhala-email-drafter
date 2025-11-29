@@ -38,13 +38,19 @@ if 'generated_subject' not in st.session_state:
     st.session_state.generated_subject = ""
 
 with st.sidebar:
-    st.header("⚙️ Settings")
-    st.markdown("---")
-    sender_name = st.text_input("👤 Your Name:", "Heshith")
-    recipient_name = st.text_input("🧑‍💼 Receiver Name:", "Manager")
+    st.header("⚙ Settings")
     
+    with st.expander("👤 Sender Details", expanded=True):
+        sender_name = st.text_input("Your Name:", "Heshith")
+        job_title = st.text_input("Job Title:", "Manager")
+        company_name = st.text_input("Company:", "ABC Corp")
+        phone_no = st.text_input("Phone:", "+94 77 123 4567")
+
+    with st.expander("🧑‍💼 Receiver Details", expanded=True):
+        recipient_name = st.text_input("Receiver Name:", "Manager")
+
     st.markdown("---")
-    if st.button("🗑️ Clear All"):
+    if st.button("🗑 Clear All"):
         st.session_state.generated_email = ""
         st.session_state.generated_subject = ""
         st.rerun()
@@ -72,7 +78,7 @@ email_type = st.selectbox(
     ]
 )
 
-user_input = st.text_area("✍️ Describe in Sinhala:", height=150, placeholder="Example: මට හෙට එන්න වෙන්නේ නෑ...")
+user_input = st.text_area("✍ Describe in Sinhala:", height=150, placeholder="Example: මට හෙට එන්න වෙන්නේ නෑ...")
 
 if st.button("✨ Draft Email Now", type="primary"):
     if user_input:
@@ -82,45 +88,49 @@ if st.button("✨ Draft Email Now", type="primary"):
             r_name = recipient_name if recipient_name else "Manager"
             s_name = sender_name if sender_name else "[Your Name]"
             
+            signature_block = f"{s_name}"
+            if job_title: signature_block += f"\n{job_title}"
+            if company_name: signature_block += f"\n{company_name}"
+            if phone_no: signature_block += f"\n{phone_no}"
+
             if email_type == "Leave Request (නිවාඩු ඉල්ලීම)":
                 st.session_state.generated_subject = "Formal Request for Leave"
-                st.session_state.generated_email = f"Dear {r_name},\n\nI am writing to formally request leave from work.\n\nReason for leave:\n{english_reason}\n\nI have taken necessary steps to ensure that my current responsibilities are covered during my absence. I apologize for any inconvenience this may cause.\n\nBest regards,\n{s_name}"
+                st.session_state.generated_email = f"Dear {r_name},\n\nI am writing to formally request leave from work.\n\nReason for leave:\n{english_reason}\n\nI have taken necessary steps to ensure that my current responsibilities are covered during my absence. I apologize for any inconvenience this may cause.\n\nBest regards,\n{signature_block}"
             
             elif email_type == "Sick Leave (අසනීප නිවාඩු)":
                 st.session_state.generated_subject = "Notification of Absence - Sick Leave"
-                st.session_state.generated_email = f"Dear {r_name},\n\nPlease accept this email as notification that I am unable to attend work today due to health reasons.\n\nDetails:\n{english_reason}\n\nI plan to rest today to ensure a speedy recovery and hope to resume my duties as soon as possible. I will remain available via email for any urgent matters.\n\nBest regards,\n{s_name}"
+                st.session_state.generated_email = f"Dear {r_name},\n\nPlease accept this email as notification that I am unable to attend work today due to health reasons.\n\nDetails:\n{english_reason}\n\nI plan to rest today to ensure a speedy recovery and hope to resume my duties as soon as possible. I will remain available via email for any urgent matters.\n\nBest regards,\n{signature_block}"
 
             elif email_type == "Work From Home (නිවසේ සිට වැඩ කිරීමට)":
                 st.session_state.generated_subject = "Request to Work from Home"
-                st.session_state.generated_email = f"Dear {r_name},\n\nI am writing to request permission to work from home today.\n\nReason:\n{english_reason}\n\nI assure you that I have full access to all necessary tools and internet connectivity to perform my duties effectively.\n\nThank you for considering my request.\n\nBest regards,\n{s_name}"
+                st.session_state.generated_email = f"Dear {r_name},\n\nI am writing to request permission to work from home today.\n\nReason:\n{english_reason}\n\nI assure you that I have full access to all necessary tools and internet connectivity to perform my duties effectively.\n\nThank you for considering my request.\n\nBest regards,\n{signature_block}"
                 
             elif email_type == "Meeting Request (රැස්වීමක් ඉල්ලීම)":
                 st.session_state.generated_subject = "Request for Meeting - Regarding Important Matter"
-                st.session_state.generated_email = f"Dear {r_name},\n\nI am writing to request a meeting to discuss a matter of importance.\n\nAgenda / Context:\n{english_reason}\n\nI would appreciate it if we could schedule this at your earliest convenience. Please let me know a time slot that works best for you.\n\nBest regards,\n{s_name}"
+                st.session_state.generated_email = f"Dear {r_name},\n\nI am writing to request a meeting to discuss a matter of importance.\n\nAgenda / Context:\n{english_reason}\n\nI would appreciate it if we could schedule this at your earliest convenience. Please let me know a time slot that works best for you.\n\nBest regards,\n{signature_block}"
             
             elif email_type == "Resignation (රැකියාවෙන් ඉවත් වීම)":
                 st.session_state.generated_subject = "Formal Resignation Letter"
-                st.session_state.generated_email = f"Dear {r_name},\n\nPlease accept this letter as formal notification that I am resigning from my position.\n\nReason (Optional):\n{english_reason}\n\nI want to thank you for the opportunity to work with this company. I will do my best to ensure a smooth handover of my responsibilities before I leave.\n\nBest regards,\n{s_name}"
+                st.session_state.generated_email = f"Dear {r_name},\n\nPlease accept this letter as formal notification that I am resigning from my position.\n\nReason (Optional):\n{english_reason}\n\nI want to thank you for the opportunity to work with this company. I will do my best to ensure a smooth handover of my responsibilities before I leave.\n\nBest regards,\n{signature_block}"
                 
             elif email_type == "Thank You Note (ස්තුති කිරීම)":
                 st.session_state.generated_subject = "Thank You"
-                st.session_state.generated_email = f"Dear {r_name},\n\nI am writing this note to express my sincere gratitude.\n\nMessage:\n{english_reason}\n\nThank you once again for your support.\n\nBest regards,\n{s_name}"
+                st.session_state.generated_email = f"Dear {r_name},\n\nI am writing this note to express my sincere gratitude.\n\nMessage:\n{english_reason}\n\nThank you once again for your support.\n\nBest regards,\n{signature_block}"
                 
             else:
                 st.session_state.generated_subject = "Update Regarding Work Matter"
-                st.session_state.generated_email = f"Dear {r_name},\n\nI am writing to bring the following to your attention.\n\nDetails:\n{english_reason}\n\nThank you for your time and consideration.\n\nBest regards,\n{s_name}"
+                st.session_state.generated_email = f"Dear {r_name},\n\nI am writing to bring the following to your attention.\n\nDetails:\n{english_reason}\n\nThank you for your time and consideration.\n\nBest regards,\n{signature_block}"
 
 if st.session_state.generated_email:
     st.markdown('<div class="success-box">✅ Draft Generated Successfully! You can edit it below.</div>', unsafe_allow_html=True)
     
     final_subject = st.text_input("📝 Subject Line:", value=st.session_state.generated_subject)
     
-    final_body = st.text_area("📄 Email Body (Editable):", value=st.session_state.generated_email, height=350)
+    final_body = st.text_area("📄 Email Body (Editable):", value=st.session_state.generated_email, height=400)
     
     full_final_text = f"Subject: {final_subject}\n\n{final_body}"
     
-    # මෙන්න මෙතන විතරයි මාරු කලේ. (Rocket -> Tools)
-    st.markdown("### 🛠️ Actions")
+    st.markdown("### 🛠 Actions")
     
     col1, col2 = st.columns(2)
     
@@ -132,14 +142,14 @@ if st.session_state.generated_email:
         st.markdown(f'''
             <a href="{mailto_link}" target="_blank" style="text-decoration: none;">
                 <div style="background-color: #4CAF50; color: white; padding: 15px; text-align: center; border-radius: 8px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    📤 Open in Email App
+                    ✉ Open in Email App
                 </div>
             </a>
             ''', unsafe_allow_html=True)
         
     with col2:
         st.download_button(
-            label="💾 Download Text File",
+            label="⇩ Download Text File",
             data=full_final_text,
             file_name="email_draft.txt",
             mime="text/plain"
