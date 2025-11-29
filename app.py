@@ -29,13 +29,6 @@ st.markdown("""
         text-align: center;
         font-weight: bold;
     }
-    .history-box {
-        padding: 10px;
-        background-color: #f1f3f4;
-        border-radius: 5px;
-        margin-bottom: 10px;
-        font-size: 0.8rem;
-    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -50,9 +43,9 @@ with st.sidebar:
     st.header("⚙ Settings")
     
     with st.expander("👤 Sender Details", expanded=False):
-        sender_name = st.text_input("Your Name:", "Heshith")
+        sender_name = st.text_input("Your Name:", "User")
         job_title = st.text_input("Job Title:", "Manager")
-        company_name = st.text_input("Company:", "ABC Corp")
+        company_name = st.text_input("Company:", "Your Company")
         phone_no = st.text_input("Phone:", "+94 77 123 4567")
 
     with st.expander("🧑‍💼 Receiver Details", expanded=False):
