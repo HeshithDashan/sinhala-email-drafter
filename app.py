@@ -44,7 +44,7 @@ with st.sidebar:
     
     with st.expander("👤 Sender Details", expanded=False):
         sender_name = st.text_input("Your Name:", "User")
-        job_title = st.text_input("Job Title:", "Manager")
+        job_title = st.text_input("Job Title:", "Your Position")
         company_name = st.text_input("Company:", "Your Company")
         phone_no = st.text_input("Phone:", "+94 77 123 4567")
 
