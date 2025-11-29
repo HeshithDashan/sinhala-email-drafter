@@ -119,7 +119,8 @@ if st.session_state.generated_email:
     
     full_final_text = f"Subject: {final_subject}\n\n{final_body}"
     
-    st.markdown("### 🚀 Actions")
+    # මෙන්න මෙතන විතරයි මාරු කලේ. (Rocket -> Tools)
+    st.markdown("### 🛠️ Actions")
     
     col1, col2 = st.columns(2)
     
