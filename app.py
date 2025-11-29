@@ -4,15 +4,21 @@ import urllib.parse
 
 st.set_page_config(page_title="Professional Email Drafter", layout="centered")
 st.title("📧 Sinhala to Professional English Email")
-st.caption("Professional Templates | Free & Simple 🚀")
+st.caption("Professional Templates | Editable Drafts ✏️")
+
+if 'generated_email' not in st.session_state:
+    st.session_state.generated_email = ""
+if 'generated_subject' not in st.session_state:
+    st.session_state.generated_subject = ""
 
 with st.sidebar:
     st.header("📝 ඊමේල් විස්තර")
     sender_name = st.text_input("ඔබේ නම (Your Name):", "Heshith")
     recipient_name = st.text_input("යවන්නේ කාටද (Receiver Name):", "Manager")
-    st.info("මෙහි දෙන නම් ඊමේල් එකට ස්වයංක්‍රීයව එකතු වේ.")
     
     if st.button("Clear All 🔄"):
+        st.session_state.generated_email = ""
+        st.session_state.generated_subject = ""
         st.rerun()
 
 def translate_text(text):
@@ -35,7 +41,7 @@ email_type = st.selectbox(
     ]
 )
 
-user_input = st.text_area("විස්තරය සිංහලෙන් ලියන්න:", height=200, placeholder="ඔබේ විස්තරය මෙතන ලියන්න...")
+user_input = st.text_area("විස්තරය සිංහලෙන් ලියන්න:", height=150, placeholder="උදා: මට හෙට එන්න වෙන්නේ නෑ...")
 
 if st.button("Draft Email 📝", type="primary"):
     if user_input:
@@ -43,12 +49,10 @@ if st.button("Draft Email 📝", type="primary"):
         
         r_name = recipient_name if recipient_name else "Manager"
         s_name = sender_name if sender_name else "[Your Name]"
-        subject = ""
-        full_email = ""
-
+        
         if email_type == "Leave Request (නිවාඩු ඉල්ලීම)":
-            subject = "Formal Request for Leave"
-            full_email = f"""Dear {r_name},
+            st.session_state.generated_subject = "Formal Request for Leave"
+            st.session_state.generated_email = f"""Dear {r_name},
 
 I am writing to formally request leave from work.
 
@@ -61,8 +65,8 @@ Best regards,
 {s_name}"""
             
         elif email_type == "Sick Leave (අසනීප නිවාඩු)":
-            subject = "Notification of Absence - Sick Leave"
-            full_email = f"""Dear {r_name},
+            st.session_state.generated_subject = "Notification of Absence - Sick Leave"
+            st.session_state.generated_email = f"""Dear {r_name},
 
 Please accept this email as notification that I am unable to attend work today due to health reasons.
 
@@ -75,8 +79,8 @@ Best regards,
 {s_name}"""
 
         elif email_type == "Work From Home (නිවසේ සිට වැඩ කිරීමට)":
-            subject = "Request to Work from Home"
-            full_email = f"""Dear {r_name},
+            st.session_state.generated_subject = "Request to Work from Home"
+            st.session_state.generated_email = f"""Dear {r_name},
 
 I am writing to request permission to work from home today.
 
@@ -91,8 +95,8 @@ Best regards,
 {s_name}"""
             
         elif email_type == "Meeting Request (රැස්වීමක් ඉල්ලීම)":
-            subject = "Request for Meeting - Regarding Important Matter"
-            full_email = f"""Dear {r_name},
+            st.session_state.generated_subject = "Request for Meeting - Regarding Important Matter"
+            st.session_state.generated_email = f"""Dear {r_name},
 
 I am writing to request a meeting to discuss a matter of importance.
 
@@ -105,8 +109,8 @@ Best regards,
 {s_name}"""
         
         elif email_type == "Resignation (රැකියාවෙන් ඉවත් වීම)":
-            subject = "Formal Resignation Letter"
-            full_email = f"""Dear {r_name},
+            st.session_state.generated_subject = "Formal Resignation Letter"
+            st.session_state.generated_email = f"""Dear {r_name},
 
 Please accept this letter as formal notification that I am resigning from my position.
 
@@ -119,8 +123,8 @@ Best regards,
 {s_name}"""
             
         elif email_type == "Thank You Note (ස්තුති කිරීම)":
-            subject = "Thank You"
-            full_email = f"""Dear {r_name},
+            st.session_state.generated_subject = "Thank You"
+            st.session_state.generated_email = f"""Dear {r_name},
 
 I am writing this note to express my sincere gratitude.
 
@@ -133,8 +137,8 @@ Best regards,
 {s_name}"""
             
         else:
-            subject = "Update Regarding Work Matter"
-            full_email = f"""Dear {r_name},
+            st.session_state.generated_subject = "Update Regarding Work Matter"
+            st.session_state.generated_email = f"""Dear {r_name},
 
 I am writing to bring the following to your attention.
 
@@ -145,38 +149,43 @@ Thank you for your time and consideration.
 
 Best regards,
 {s_name}"""
-        
-        st.success("Professional Email Draft Ready! ✅")
-        
-        final_display_text = f"Subject: {subject}\n\n{full_email}"
-        st.code(final_display_text, language='text')
 
-        # Open in Email Client Link creation
-        safe_subject = urllib.parse.quote(subject)
-        safe_body = urllib.parse.quote(full_email)
-        mailto_link = f"mailto:?subject={safe_subject}&body={safe_body}"
+if st.session_state.generated_email:
+    st.success("Draft Generated! You can edit it below (ඔබට අවශ්‍ය නම් පහතින් වෙනස්කම් කරන්න):")
+    
+    final_subject = st.text_input("Subject Line:", value=st.session_state.generated_subject)
+    
+    final_body = st.text_area("Email Body (Editable):", value=st.session_state.generated_email, height=350)
+    
+    full_final_text = f"Subject: {final_subject}\n\n{final_body}"
+    
+    st.markdown("### 📨 Preview & Actions")
+    
+    col1, col2 = st.columns(2)
+    
+    safe_subject = urllib.parse.quote(final_subject)
+    safe_body = urllib.parse.quote(final_body)
+    mailto_link = f"mailto:?subject={safe_subject}&body={safe_body}"
 
-        col1, col2 = st.columns(2)
+    with col1:
+        st.markdown(f'''
+            <a href="{mailto_link}" target="_blank">
+                <button style="width: 100%; background-color: #FF4B4B; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">
+                    🚀 Open in Email App
+                </button>
+            </a>
+            ''', unsafe_allow_html=True)
         
-        with col1:
-            st.markdown(f'''
-                <a href="{mailto_link}" target="_blank">
-                    <button style="width: 100%; background-color: #FF4B4B; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">
-                        🚀 Open in Email App
-                    </button>
-                </a>
-                ''', unsafe_allow_html=True)
-            
-        with col2:
-            st.download_button(
-                label="💾 Download Text File",
-                data=final_display_text,
-                file_name="email_draft.txt",
-                mime="text/plain"
-            )
-        
-    else:
-        st.warning("කරුණාකර විස්තරයක් ඇතුලත් කරන්න.")
+    with col2:
+        st.download_button(
+            label="💾 Download Text File",
+            data=full_final_text,
+            file_name="email_draft.txt",
+            mime="text/plain"
+        )
+    
+    with st.expander("Click here to View/Copy Final Text"):
+        st.code(full_final_text, language='text')
 
 st.markdown("---")
 st.markdown("Made with ❤️ by Heshith_D")
